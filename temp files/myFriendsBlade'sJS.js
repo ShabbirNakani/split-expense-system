@@ -22,8 +22,7 @@ $(function () {
         // featch settele modal detail
         $.ajax({
             type: "get",
-            // url: "{{ route('settel.modal.data') }}",
-            url: '/settel-modal-data',
+            url: "{{ route('settel.modal.data') }}",
             data: {
                 'friendId': friendId,
                 'groupids': groupids,
@@ -36,20 +35,20 @@ $(function () {
                     // console.log(group);
 
                     $('.append-checkBox').append(`
-                  <div class="form-check">
-                       <div class="row">
-                            <div class="col-8">
-                                    <input class="form-check-input checkBoxCommon" type="checkbox" value="${group.id}" id="groups" name="groups[]">
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                        ${group.title}
-                                    </label>
-                            </div>
-                                <div class="col-4">
-                                    <h4><span class="badge badge-success">${group.remainingAmount}</span></h4>
+                      <div class="form-check">
+                           <div class="row">
+                                <div class="col-8">
+                                        <input class="form-check-input checkBoxCommon" type="checkbox" value="${group.id}" id="groups" name="groups[]">
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            ${group.title}
+                                        </label>
+                                </div>
+                                    <div class="col-4">
+                                        <h4><span class="badge badge-success">${group.remainingAmount}</span></h4>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                  `);
+                      `);
 
                 });
                 // console.log(data.friendId);
@@ -75,7 +74,7 @@ $(function () {
         $(".checkBoxCommon").prop('checked', $(this).prop('checked'));
     });
 
-    // settele expense
+
     $(document).on('click', '#submitSettel', function (event) {
 
         event.preventDefault();
@@ -90,35 +89,16 @@ $(function () {
         console.log(friendId);
         $.ajax({
             type: "get",
-            // url: "{{ route('settel.expense') }}",
-            url: '/settel-expense',
+            url: "{{ route('settel.expense') }}",
             data: form,
             success: function (data) {
                 console.log(data);
-                // update the expense to zero for setteled groups
-                $(`.data_amount_${data.friendId}`).html(`${data.remainingAmount}`);
-                // class
-                if (data.remainingAmount > 0) {
-                    // remove previous class
-                    // $(`.data_amount_${data.friendId}`).removeClass();
-                    // add class succes
-                    // $(`.data_amount_${data.friendId}`).addClass();
-                } else if (data.remainingAmount < 0) {
-                    // remove previous class
-                    // add class danged
-                } else {
-                    // remove previous class
-                }
-                $('#settel-expense-modal').modal('hide');
             },
             error: function (data) {
                 console.log(data);
-                $('#settel-expense-modal').modal('hide');
             }
         });
     });
-
-    // disable settel if no group is selected
     $(document).on('change', '.checkBoxCommon', function () {
         var checkedBox = $('input[name="groups[]"]:checked').length;
         // console.log(checkedBox);
@@ -128,6 +108,5 @@ $(function () {
             $('#submitSettel').prop('disabled', true);
         }
     });
-
 
 })

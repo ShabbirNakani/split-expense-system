@@ -318,29 +318,31 @@ class FriendsController extends Controller
     public function settelExpense(Request $request)
     {
         // dd($request->all());
+        $updateData = $request->all();
         $groupIds = $request->groups;
         $friendId = $request->friendId;
         $myId = Auth::user()->id;
 
         // settel those expenses which has the $myId as reciver_Id id and $friendId as user_id   or vive versa
-        // DB::enableQueryLog();
-        // foreach ($groupIds as $groupId) {
-        //     $splitExpenses = SplitExpense::whereGroupListId($groupId)
-        //         ->where(function ($query) use ($friendId, $myId) {
-        //             $query->where('user_id', $friendId)
-        //                 ->where('receiver_id', $myId)
-        //                 ->orWhere(function ($subquery) use ($friendId, $myId) {
-        //                     $subquery->where('user_id', $myId)
-        //                         ->where('receiver_id', $friendId);
-        //                 });
-        //         })
-        //         ->update(['is_Settled' => 'Settled']);
-        // }
+        DB::enableQueryLog();
+        foreach ($groupIds as $groupId) {
+            $splitExpenses = SplitExpense::whereGroupListId($groupId)
+                ->where(function ($query) use ($friendId, $myId) {
+                    $query->where('user_id', $friendId)
+                        ->where('receiver_id', $myId)
+                        ->orWhere(function ($subquery) use ($friendId, $myId) {
+                            $subquery->where('user_id', $myId)
+                                ->where('receiver_id', $friendId);
+                        });
+                })
+                ->update(['is_Settled' => 'Settled']);
+        }
 
         // dd(DB::getQueryLog());
 
         $total_owe = 0;
         $total_pay = 0;
+        // remaining amount calculation
         foreach ($groupIds as $groupId) {
             $splitExpenses = SplitExpense::whereGroupListId($groupId)
                 ->where(function ($query) use ($friendId, $myId) {
@@ -354,14 +356,34 @@ class FriendsController extends Controller
                 ->where(['is_Settled' => 'notSettled'])
                 ->get();
 
+            // dump($splitExpenses);
+
+
+            foreach ($splitExpenses as $splitExpense) {
+                if ($splitExpense->receiver_id !== $splitExpense->user_id) {
+                    // checking who spent and to whom
+                    // owe condition
+                    if (($splitExpense->receiver_id == Auth::user()->id) && ($splitExpense->user_id == $friendId)) {
+                        $total_owe += $splitExpense->amount;
+                    } else if (($splitExpense->receiver_id == $friendId) && ($splitExpense->user_id == Auth::user()->id)) {
+                        // pay condition
+                        // dump('pay amount =>', $expens->amount);
+                        $total_pay += $splitExpense->amount;
+                    }
+                }
+            }
+            // group end
+        }
+        if ($total_owe > $total_pay) {
+            $remainingAmount = $total_owe - $total_pay;
+        } elseif ($total_owe < $total_pay) {
+            $remainingAmount =  $total_pay - $total_owe;
+        } elseif ($total_owe == $total_pay) {
+            $remainingAmount = 0;
         }
 
-        exit();
-        return response()->json($request->all()) ;
+        $updateData['remainingAmount'] = $remainingAmount;
+        // exit();
+        return response()->json($updateData);
     }
-
-
-
-
 }
-

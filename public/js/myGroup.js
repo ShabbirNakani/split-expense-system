@@ -150,7 +150,7 @@ $(function () {
         $.ajax({
             type: "get",
             // url: "{{ route('checkExpensesBeforeEdit') }}",
-            url: "{{ route('checkExpensesBeforeEdit') }}",
+            url: "/check-expenses-before-edit",
             async: false,
             data: {
                 'groupId': groupId,

@@ -142,6 +142,7 @@ class ExpenseController extends Controller
      */
     public function edit($id)
     {
+        // dd($id);
         $creatorId = Auth::user()->id;
         $expense = Expense::find($id)->toArray();
 

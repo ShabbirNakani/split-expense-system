@@ -528,44 +528,8 @@
                 });
 
 
+
             });
-
-            // delete  closing method
-            // $(document).on('hidden.bs.modal', '#delete-expense-modal', function() {
-            //     $('#submitDelete').attr("data-expenseId", '');
-            // });
-
-            // delete  confirm modal opreration for expense
-            // $(document).on('click', '#submitDelete', function() {
-            //     $('#submitDelete').prop('disable', true);
-            //     // console.log($(this));
-            //     var expenseId = $(this).attr("data-expenseId");
-
-            //     console.log(expenseId, 'modal');
-
-            //     // $.ajax({
-            //     //     type: "delete",
-            //     //     url: "/expense/" + expenseId,
-            //     //     data: {
-            //     //         "_token": "{{ csrf_token() }}"
-            //     //     },
-            //     //     success: function(data) {
-            //     //         console.log('expense deleted');
-            //     //         console.log('delete expense', data);
-            //     //         let expenseId = data.deleteExpense.id;
-            //     //         console.log(`.data${expenseId}`);
-            //     //         $(`.data_${expenseId}`).remove();
-            //     //         // $('#delete-expense-modal').modal('toggle');
-            //     //         toastr.warning('Expense has been deleted');
-            //     //     },
-            //     //     error: function(data) {
-            //     //         console.log('craete expense form data sent');
-            //     //         console.log(data);
-            //     //         // $('#submitDelete').prop('disable', false);
-            //     //     },
-            //     // });
-
-            // });
 
             // edit expense attach info of editable expense
             $(document).on('click', '.editExpenseButton', handleEditOnClick);
