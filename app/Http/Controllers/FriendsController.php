@@ -360,3 +360,12 @@ class FriendsController extends Controller
         return response()->json($request->all());
     }
 }
+
+
+
+
+git commit -m "first commit"
+git config --global user.email "mahammad.n@webcodegenie.com"
+git config --global user.name "ShabbirNakani"
+git config --get-all
+git commit -m "first commit"
