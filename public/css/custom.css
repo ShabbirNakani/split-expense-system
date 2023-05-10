@@ -1,0 +1,58 @@
+.bg-custom-1 {
+    background-color: #85144b;
+}
+
+.bg-custom-2 {
+    background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+}
+
+#img_contain {
+    margin-top: 10px;
+    width: 520px;
+}
+
+
+#image-preview {
+    height: 157px;
+    width: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
+    margin-left: 250px;
+}
+
+#updateBtn {
+    margin-left: 10px;
+    width: 125px;
+}
+
+.fa-expand-arrows-alt {
+    margin-top: 7px;
+}
+
+.navbarDropdownMenuLink {
+    margin-bottom: 5px;
+}
+
+.pagination {
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.select2-search__field {
+    height: 22px !important;
+    width: 7em !important;
+}
+
+.select2-selection__choice__display {
+    color: black !important;
+}
+
+#actions {
+    display: flex !important;
+}
+
+.error {
+    color: red;
+}
