@@ -357,7 +357,11 @@ class FriendsController extends Controller
         }
 
         exit();
-        return response()->json($request->all());
+        return response()->json($request->all()) ;
     }
+
+
+
+
 }
 
