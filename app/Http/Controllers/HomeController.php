@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SplitExpense;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $authUserId = Auth::user()->id;
+        $splitExpenses = SplitExpense::whereUserId($authUserId)
+            ->orwhere('receiver_id', $authUserId)->get();
+        $total_owe = 0;
+        $total_pay = 0;
+        foreach ($splitExpenses as $splitExpense) {
+            if ($splitExpense->receiver_id == $authUserId) {
+                $total_owe += $splitExpense->amount;
+            } elseif ($splitExpense->user_id == $authUserId) {
+                $total_pay += $splitExpense->amount;
+            }
+        }
+        return view('home')->with(['total_owe' => $total_owe, 'total_pay' => $total_pay]);
     }
 
 

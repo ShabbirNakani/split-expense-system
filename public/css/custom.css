@@ -49,10 +49,20 @@
     color: black !important;
 }
 
-#actions {
+.groupActions {
     display: flex !important;
 }
 
 .error {
     color: red;
+}
+
+.l-bg-orange-dark {
+    background: linear-gradient(to right, #a86008, #ffba56) !important;
+    color: #fff;
+}
+
+.l-bg-green-dark {
+    background: linear-gradient(to right, #0a504a, #38ef7d) !important;
+    color: #fff;
 }

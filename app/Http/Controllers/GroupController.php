@@ -144,12 +144,21 @@ class GroupController extends Controller
      */
     public function edit($id)
     {
+        // auth user
+        // groupcreator from query
         // DB::enableQueryLog();
-        $groupWithUsers = GroupList::with('groupUsers.groupUsers')->whereId($id)->get();
+        $requester = Auth::user()->id;
+        $groupCreatorId = GroupList::whereId($id)->first()->user_id;
+        if ($requester == $groupCreatorId) {
+            $groupWithUsers = GroupList::with('groupUsers.groupUsers')->whereId($id)->get();
+            return response()->json(['groupWithUsers' => $groupWithUsers]);
+        } else {
+            // return response()->json(['message' => 'You are not allowed to edit This Group']);
+            return redirect('groups')->with('status', 'You are not allowed to delete this Group');
+        }
         // dd(DB::getQueryLog());
         // dd($groupWithUsers->toArray());
         // dd($groupWithUsers);
-        return response()->json(['groupWithUsers' => $groupWithUsers]);
     }
 
     /**
@@ -204,26 +213,35 @@ class GroupController extends Controller
     {
         // dd($id, 'delete');
 
-        $groupExpenses = GroupList::with('expenses.splitExpenses')->whereId($id)->first();
-        $remainigSettelemente = 0;
-        foreach ($groupExpenses->expenses as $expense) {
-            // dump($expense->splitExpenses);
-            foreach ($expense->splitExpenses as $splitExpense) {
-                dump($splitExpense->is_Settled);
-                if ($splitExpense->is_Settled == "notSettled") {
-                    $remainigSettelemente += 1;
+        $requester = Auth::user()->id;
+        // dump($requester);
+        $groupCreatorId = GroupList::whereId($id)->first()->user_id;
+        // dd($groupCreatorId);
+
+        if ($requester == $groupCreatorId) {
+            $groupExpenses = GroupList::with('expenses.splitExpenses')->whereId($id)->first();
+            $remainigSettelemente = 0;
+            foreach ($groupExpenses->expenses as $expense) {
+                // dump($expense->splitExpenses);
+                foreach ($expense->splitExpenses as $splitExpense) {
+                    // dump($splitExpense->is_Settled);
+                    if ($splitExpense->is_Settled == "notSettled") {
+                        $remainigSettelemente += 1;
+                    }
                 }
             }
-        }
-        // dd($remainigSettelemente);
-        if (!$remainigSettelemente) {
-            GroupList::find($id)->delete();
-            GroupUser::whereGroupListId($id)->delete();
-            Expense::whereGroupListId($id)->delete();
-            SplitExpense::whereGroupListId($id)->delete();
-            return  redirect('groups')->with('status', 'Group deleted Sucessfully');
+            // dd($remainigSettelemente);
+            if (!$remainigSettelemente) {
+                GroupList::find($id)->delete();
+                GroupUser::whereGroupListId($id)->delete();
+                Expense::whereGroupListId($id)->delete();
+                SplitExpense::whereGroupListId($id)->delete();
+                return  redirect('groups')->with('status', 'Group deleted Sucessfully');
+            } else {
+                return  redirect('groups')->with('status', 'Can not Delete Group,Settelment is Remaining');
+            }
         } else {
-            return  redirect('groups')->with('status', 'Can not Delete Group,Settelment is Remaining');
+            return redirect('groups')->with('status', 'You are not allowed to delete this Group');
         }
     }
 

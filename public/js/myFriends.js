@@ -1,6 +1,12 @@
 $(function () {
 
-    let table = new DataTable('#expense-table');
+    var expense_table = $('#expense-table').dataTable({
+        "aoColumnDefs": [
+            { "bSortable": false, "aTargets": [2, 3] },
+            { "bSearchable": false, "aTargets": [2, 3] }
+        ]
+    });
+
 
     // settelment modal open
     $(document).on('click', '.open-settel-modal', handleSettelOnClick);
@@ -17,8 +23,6 @@ $(function () {
                 // console.log($(this).attr('data-group-id'));
                 groupids.push($(this).attr('data-group-id'));
             });
-        // console.log('friend id : ', friendId);
-        // console.log('group id : ', groupids);
         // featch settele modal detail
         $.ajax({
             type: "get",
@@ -30,28 +34,46 @@ $(function () {
             },
             success: function (data) {
                 console.log(data);
-                // console.log(data.groupsWithExpenses);
-
-                $.each(data.groupsWithExpenses, function (key, group) {
-                    // console.log(group);
-
-                    $('.append-checkBox').append(`
-                  <div class="form-check">
-                       <div class="row">
-                            <div class="col-8">
-                                    <input class="form-check-input checkBoxCommon" type="checkbox" value="${group.id}" id="groups" name="groups[]">
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                        ${group.title}
-                                    </label>
-                            </div>
-                                <div class="col-4">
-                                    <h4><span class="badge badge-success">${group.remainingAmount}</span></h4>
-                                </div>
+                // apend select all button
+                $('.append-checkBox').append(`
+                    <div class="form-check mb-3">
+                        <div class="row" id='selectAllGroupsCheckBox'>
+                            <div class="col-12">
+                                <input class="form-check-input ckbCheckAll" type="checkbox" value=""
+                                    id="ckbCheckAll">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    Select All
+                                </label>
                             </div>
                         </div>
-                  `);
+                    </div>
+                `);
+                // console.log(data.groupsWithExpenses);
+                // if (data.groupsWithExpenses.length >= 1) {
+                if (Object.keys(data.groupsWithExpenses).length >= 1) {
+                    $.each(data.groupsWithExpenses, function (key, group) {
+                        // console.log(group);
+                        if (group.status != 'default') {
+                            $('.append-checkBox').append(`
+                            <div class="form-check">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <input class="form-check-input checkBoxCommon" type="checkbox" value="${group.id}" id="groups" name="groups[]">
+                                        <label class="form-check-label" for="flexCheckDefault">${group.title}</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <h4><span class="badge badge-success">${group.remainingAmount}</span></h4>
+                                    </div>
+                                </div>
+                            </div>
+                      `);
+                        }
 
-                });
+                    });
+                } else {
+                    // pass a msg that every expenses have been settled
+                    $('.append-checkBox').html(`<h3 class="text-success"> All Expenses Are Setteled </h3>`)
+                }
                 // console.log(data.friendId);
                 // settel button has friendid
                 $('#submitSettel').attr('data-friend-id', data.friendId);
@@ -110,6 +132,7 @@ $(function () {
                     // remove previous class
                 }
                 $('#settel-expense-modal').modal('hide');
+                toastr.success(`Amount Settled With ${titleCase(data.friendName)}`);
             },
             error: function (data) {
                 console.log(data);
@@ -128,6 +151,41 @@ $(function () {
             $('#submitSettel').prop('disabled', true);
         }
     });
+
+    // groupWise Friends Filter
+    $(document).on('change', '#groupwiseFilter', function (event) {
+        event.preventDefault();
+        // alert('filter works');
+
+        let groupFilter = $('#groupwiseFilter').val();
+        console.log(groupFilter);
+        if (groupFilter != 'null') {
+            // $.ajax({
+            //     type: "get",
+            //     url: "/friends",
+            //     data: {
+            //         'groupFilter': groupFilter,
+            //     },
+            //     dataType: "json",
+            //     success: function (result) {
+            //     }
+            // });
+        } else {
+            toastr.info('No Filter is Selected');
+        }
+    });
+
+    // function to upper case first letter of each words in a string
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
+    }
 
 
 })

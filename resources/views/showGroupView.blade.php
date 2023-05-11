@@ -296,6 +296,8 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
+        var authUserId = {{ auth()->user()->id }}
+        // alert(authUserId);
         $(function() {
 
             // // custom range picker script
@@ -336,13 +338,16 @@
                         $('tbody').empty();
                         data.expenses.forEach(expense => {
                             // console.log('expense', expense);
-                            $('#expense-table').append(
-                                `<tr class="data_${expense.id}" >
+
+                            var appendRow = `<tr class="data_${expense.id}" >
                                 <td>${expense.title}</td>
                                 <td>${expense.members}</td>
                                 <td>${expense.amount}</td>
                                 <td>${expense.expense_date}</td>
-                                <td id="actions">
+                                <td id="actions">`;
+
+                            if (authUserId == `${expense.user_id}`) {
+                                appendRow += `
                                     {{-- edit expense --}}
                                     <a class="mr-2 btn text-primary editExpenseButton"
                                         title="Edit Expense" data-expenseId="${expense.id}">
@@ -354,9 +359,12 @@
                                         data-expenseId="${expense.id}">
                                         <i class="fa fa-trash"></i>
                                     </button>
-                                </td>
-                            </tr> `
-                            );
+                                `;
+
+                            }
+                            appendRow += ` </td></tr>`;
+
+                            $('#expense-table').append(appendRow);
                         });
                         // append expense id to the delete modal
                         // date('d-m-Y', strtotime(expense.expense_date));

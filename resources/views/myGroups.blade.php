@@ -73,12 +73,14 @@
                                         <td>{{ ucwords($group->title) }}</td>
                                         <td>{{ ucwords($group->discription) }}</td>
                                         <td style="min-width: 140px;">{{ $group->total_members }}</td>
-                                        <td id="actions">
+                                        <td id="actions" class='groupActions'>
                                             {{-- edit group --}}
-                                            <a class="mr-2 btn text-primary edit-group-link" data-toggle="tooltip"
-                                                title="Edit Group" data-id="{{ $group->id }}">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
+                                            @if ($group->user_id == Auth::user()->id)
+                                                <a class="mr-2 btn text-primary edit-group-link" data-toggle="tooltip"
+                                                    title="Edit Group" data-id="{{ $group->id }}">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            @endif
                                             <input type="hidden" value={{ $group->id }} name='groupId'>
                                             {{-- show group  --}}
                                             <a href="{{ route('groups.show', $group->id) }}" class="mr-2 btn text-info"
@@ -86,14 +88,16 @@
                                                 <i class="fa fa-eye"></i>
                                             </a>
                                             {{-- delete group --}}
-                                            <form action="{{ route('groups.destroy', $group->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button name="delete" value="delete" class="btn  mr-2  text-danger"
-                                                    data-toggle="tooltip" title="Delete Group">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </form>
+                                            @if ($group->user_id == Auth::user()->id)
+                                                <form action="{{ route('groups.destroy', $group->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button name="delete" value="delete" class="btn  mr-2  text-danger"
+                                                        data-toggle="tooltip" title="Delete Group">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

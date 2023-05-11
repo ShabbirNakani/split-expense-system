@@ -27,11 +27,13 @@
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="inputGroupSelect01">Groups</label>
                     </div>
-                    <select class="custom-select" id="groupwiseFilter">
+                    <select class="custom-select" id="filterUser">
                         <option selected value="null">Choose...</option>
-                        @foreach ($friendsGroupsWithUsers as $groups)
-                            <option value="{{ $groups['id'] }}">{{ $groups['title'] }}</option>
-                        @endforeach
+                        {{-- @foreach ($friendsGroupsWithUsers as $groups)
+                            @foreach ($groups['users'] as $users)
+                                <option value="{{ $groups['id'] }}">{{ $groups['title'] }}</option>
+                            @endforeach
+                        @endforeach --}}
                     </select>
                 </div>
             </div>
@@ -55,6 +57,7 @@
                                         <td>{{ $friend['name'] }}</td>
                                         <td class="groupIdContainer">
                                             <div class="row">
+
                                                 @foreach ($friendsGroupsWithUsers as $groups)
                                                     {{-- {{ dd($groups) }} --}}
                                                     @foreach ($groups['users'] as $users)
@@ -76,7 +79,7 @@
                                             @isset($friend['status'])
                                             @if ($friend['status'] == 'owe') class="text-success data_amount_{{ $friend['id'] }}"
                                             @elseif($friend['status'] == 'pay') class="text-danger data_amount_{{ $friend['id'] }}"
-                                            @endif @endisset>
+                                            @endif @endisset >
                                             @php
                                                 $friend['remainigAmount'] = isset($friend['remainigAmount']) ? $friend['remainigAmount'] : 0;
                                             @endphp
@@ -116,7 +119,34 @@
             <div class="modal-body">
                 <form id="setteleExpenseForm">
                     @csrf
+                    {{-- <div class="form-check mb-3">
+                        <div class="row" id='selectAllGroupsCheckBox'>
+                            <div class="col-12">
+                                <input class="form-check-input ckbCheckAll" type="checkbox" value=""
+                                    id="ckbCheckAll">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    Select All
+                                </label>
+                            </div>
+                        </div>
+                    </div> --}}
                     <div class="append-checkBox">
+                        {{-- @foreach ($groupsWithExpenses as $groups)
+                            <div class="form-check">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <input class="form-check-input checkBoxCommon" type="checkbox"
+                                            value="{{ $groups['id'] }}" id="users" name="expenseUsers[]">
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            {{ $groups['title'] }}
+                                        </label>
+                                    </div>
+                                    <div class="col-4">
+                                        <h4><span class="badge badge-success">Remiaining expense</span></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach --}}
                     </div>
             </div>
             <div class="modal-footer">

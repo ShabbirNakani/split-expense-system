@@ -10,6 +10,58 @@
     <div class="col-12">
         <h1>
             welcome!! <span> {{ Auth::user()->name }}</span>
+
         </h1>
+        {{-- <div class="card">
+            <div class="card-body">
+                <h3>
+                    total Owe Till Date : {{ $total_owe }} RS
+                </h3>
+            </div>
+        </div> --}}
+
+        <div class="row">
+            <div class="col-xl-3 col-lg-6 mt-5">
+                <div class="card l-bg-orange-dark">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Total Amount Spent</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-8">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{ $total_owe }} Rs.
+                                </h2>
+                            </div>
+                            {{-- <div class="col-4 text-right">
+                                <span>2.5% <i class="fa fa-arrow-up"></i></span>
+                            </div> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6 mt-5">
+                <div class="card l-bg-green-dark">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-donate"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Total Amount You owe</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-8">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{ $total_pay }} Rs.
+                                </h2>
+                            </div>
+                            {{-- <div class="col-4 text-right">
+                                <span>10% <i class="fa fa-arrow-up"></i></span>
+                            </div> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
