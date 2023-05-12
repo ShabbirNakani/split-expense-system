@@ -66,3 +66,13 @@
     background: linear-gradient(to right, #0a504a, #38ef7d) !important;
     color: #fff;
 }
+
+.l-bg-cherry {
+    background: linear-gradient(to right, #493240, #f09) !important;
+    color: #fff;
+}
+
+.l-bg-blue-dark {
+    background: linear-gradient(to right, #373b44, #4286f4) !important;
+    color: #fff;
+}

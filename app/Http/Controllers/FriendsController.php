@@ -25,16 +25,22 @@ class FriendsController extends Controller
      */
     public function index(Request $request)
     {
+
+
+        $fGroups = GroupUser::with('groupOfFriend.users')->where('user_id', Auth::user()->id)->get()->toArray();
+        // dd($fGroup);
+
         // dd($request->all());
         $authUserId = Auth::user()->id;
-        // final logic
         // finding friends from group users
-        $groupId = GroupUser::select('group_list_id')->whereUserId($authUserId);
+        $groupId = GroupUser::select('group_list_id')->whereUserId($authUserId)->get();
         // dd($groupId);
         // finding groups
+        // DB::enableQueryLog();
         $groupsWithUsers = GroupList::with('users')->whereIn('id', $groupId)->get()->toArray();
         // finding friends
-
+        // dd(DB::getQueryLog());
+        dd($groupsWithUsers);
         $friends = [];
         foreach ($groupsWithUsers as $group) {
             // dump($group['users']);

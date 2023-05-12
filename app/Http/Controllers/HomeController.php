@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GroupUser;
 use App\Models\SplitExpense;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,6 +31,7 @@ class HomeController extends Controller
     public function index()
     {
         $authUserId = Auth::user()->id;
+        // dd($authUserId);
         $splitExpenses = SplitExpense::whereUserId($authUserId)
             ->orwhere('receiver_id', $authUserId)->get();
         $total_owe = 0;
@@ -41,7 +43,35 @@ class HomeController extends Controller
                 $total_pay += $splitExpense->amount;
             }
         }
-        return view('home')->with(['total_owe' => $total_owe, 'total_pay' => $total_pay]);
+        $totalOweRemaining = 0;
+        $totalPayRemainig = 0;
+        $splitExpensesForGrandTotal = SplitExpense::where('is_Settled', 'notSettled')
+            ->where(function ($query) use ($authUserId) {
+                $query->whereUserId($authUserId)
+                    ->orwhere('receiver_id', $authUserId);
+            })->get();
+
+        // isset amount grand total like friends grand total
+        foreach ($splitExpensesForGrandTotal as $splitExpenses) {
+            if ($splitExpense->receiver_id == $authUserId) {
+                $totalOweRemaining += $splitExpense->amount;
+            } elseif ($splitExpense->user_id == $authUserId) {
+                $totalPayRemainig += $splitExpense->amount;
+            }
+        }
+        if ($totalOweRemaining > $totalPayRemainig) {
+            $remainingAmount = '+' . ($totalOweRemaining - $totalPayRemainig);
+        } elseif ($totalOweRemaining < $totalPayRemainig) {
+            $remainingAmount =  '-' . $totalPayRemainig - $totalOweRemaining;
+        } elseif ($totalOweRemaining == $totalPayRemainig) {
+            $remainingAmount = 0;
+        }
+        // total groups
+        $groupsCount = GroupUser::having('user_id', $authUserId)->count('user_id');
+        // dd($groups);
+
+
+        return view('home')->with(['total_owe' => $total_owe, 'total_pay' => $total_pay, 'remainingAmount' => $remainingAmount, 'groupsCount' => $groupsCount]);
     }
 
 

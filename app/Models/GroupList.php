@@ -52,4 +52,9 @@ class GroupList extends Model
     {
         return $this->hasMany(GroupUser::class);
     }
+
+    public function friend()
+    {
+        return $this->belongsTo(GroupUser::class);
+    }
 }

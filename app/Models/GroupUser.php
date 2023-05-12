@@ -32,4 +32,9 @@ class GroupUser extends Model
     {
         return $this->hasMany(User::class, 'id', 'user_id');
     }
+    // for friends module
+    public function groupOfFriend()
+    {
+        return $this->hasOne(GroupList::class, 'id', 'group_list_id');
+    }
 }

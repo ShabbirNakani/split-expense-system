@@ -61,7 +61,7 @@
                                                         {{-- {{$users['id']}} --}}
                                                         {{-- if group users id matches the friend id then show that groups name --}}
                                                         @if ($users['id'] == $friend['id'])
-                                                            <div class="col mb-1" data-group-id="{{ $groups['id'] }}">
+                                                            <div class="mr-3" data-group-id="{{ $groups['id'] }}">
                                                                 <h4>
                                                                     <span
                                                                         class="badge badge-light">{{ $groups['title'] }}</span>
