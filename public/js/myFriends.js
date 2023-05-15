@@ -1,15 +1,56 @@
 $(function () {
 
+
+    // make an ajax call to add table first time
+
+    // $.ajax({
+    //     type: "GET",
+    //     url: "/friends",
+    //     // data: {
+    //     //     'data': varName,
+    //     // },
+    //     dataType: "json",
+    //     success: function (data) {
+    //         // alert('ajax send')
+    //         console.log(data);
+    //         // add the html response to the view
+    //         $('#expense_container').html(data.html);
+    //     },
+    //     error: function (data) {
+    //         console.log(data);
+    //     },
+    // });
+
+
+    // data table
     var expense_table = $('#expense-table').dataTable({
         "aoColumnDefs": [
             { "bSortable": false, "aTargets": [2, 3] },
             { "bSearchable": false, "aTargets": [2, 3] }
-        ]
+        ],
+        processing: true,
+        serverSide: true,
+        ajax: "/friends",
+        columns: [
+            { data: 'name', name: 'name' },
+            { data: 'groupNames', name: 'groups', 'className': "groupIdContainer" },
+            { data: 'remainigAmount', name: 'remainigAmount', 'className': `data_amount` },
+            { data: 'action', name: 'action', orderable: false, searchable: false },
+        ],
+        createdRow: function (row, data, index) {
+            //
+            // if the second column cell is blank apply special formatting
+            //
+            // console.log(data.id);
+            $(row).addClass(`data_${data.id}`);
+        }
     });
 
 
     // settelment modal open
+
     $(document).on('click', '.open-settel-modal', handleSettelOnClick);
+
 
     function handleSettelOnClick(event) {
         // alert('settel modal clicked');
@@ -118,7 +159,10 @@ $(function () {
             success: function (data) {
                 console.log(data);
                 // update the expense to zero for setteled groups
-                $(`.data_amount_${data.friendId}`).html(`${data.remainingAmount}`);
+                // $(`data_${data.friendId}`).closest('.data_amount').html(data.remainingAmount);
+                // console.log($(`data_${data.friendId}`).closest('.data_amount').html(data.remainingAmount));
+                // $(`.data_amount_${data.friendId}`).html(`${data.remainingAmount}`);
+                $('#expense-table').DataTable().ajax.reload(null, false);
                 // class
                 if (data.remainingAmount > 0) {
                     // remove previous class

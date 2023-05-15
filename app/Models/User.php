@@ -55,6 +55,7 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(GroupList::class, 'group_users', 'user_id', 'group_list_id');
     }
+
     // group expenses
     public function expenses()
     {

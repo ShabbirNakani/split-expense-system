@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
+use App\Models\GroupList;
 use App\Models\GroupUser;
 use App\Models\SplitExpense;
 use App\Models\User;
@@ -21,6 +23,22 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
+        // using all function => acessing as property
+        // $users = User::all();
+        // foreach ($users as $user) {
+        //     foreach ($user->expenses as $expense) {
+        //         echo $expense->amount;
+        //     }
+        // }
+
+        // // we can use relation name as a method directly then use get() function to featch data of ralated model
+        // $expese = Expense::find(1);
+        // $splitExpenses = $expese->splitExpenses()->get();
+
+        // // to directly load related model => we can use use load() method directly on a collactoion model
+        // $groups = GroupList::all();
+        // $groups->load('comments');
     }
 
     /**

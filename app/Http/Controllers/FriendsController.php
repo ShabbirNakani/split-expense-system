@@ -7,10 +7,12 @@ use App\Models\GroupList;
 use App\Models\GroupUser;
 use App\Models\SplitExpense;
 use App\Models\User;
+use App\Utils\Paginate;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 use PHPUnit\TextUI\XmlConfiguration\Group;
 use Yajra\DataTables\Contracts\DataTable;
 use Yajra\DataTables\DataTables as DataTablesDataTables;
@@ -25,35 +27,25 @@ class FriendsController extends Controller
      */
     public function index(Request $request)
     {
-
-
-        $fGroups = GroupUser::with('groupOfFriend.users')->where('user_id', Auth::user()->id)->get()->toArray();
-        // dd($fGroup);
-
-        // dd($request->all());
+        // for groupWise filter
+        $friendsGroups = GroupUser::with('groupOfFriend.users')->where('user_id', Auth::user()->id)->get()->toArray();
+        // dd($friendsGroups);
         $authUserId = Auth::user()->id;
         // finding friends from group users
-        $groupId = GroupUser::select('group_list_id')->whereUserId($authUserId)->get();
-        // dd($groupId);
+        $groupId = GroupUser::select('group_list_id')->whereUserId($authUserId);
         // finding groups
-        // DB::enableQueryLog();
-        $groupsWithUsers = GroupList::with('users')->whereIn('id', $groupId)->get()->toArray();
+        $friendsGroupsWithUsers = GroupList::with('users')->whereIn('id', $groupId)->get()->toArray();
         // finding friends
-        // dd(DB::getQueryLog());
-        dd($groupsWithUsers);
         $friends = [];
-        foreach ($groupsWithUsers as $group) {
-            // dump($group['users']);
+        foreach ($friendsGroupsWithUsers as $group) {
             $users = $group['users'];
             foreach ($users as $user) {
-                // dump($user);
                 // find unique of users
                 if (!isset($friends[$user['id']]) &&  ($user['id'] !== $authUserId)) {
                     $friends[$user['id']] = $user;
                 }
             }
         }
-
         // finding expenses for each friend
         foreach ($friends as $friend) {
             $friendId = $friend['id'];
@@ -96,13 +88,61 @@ class FriendsController extends Controller
                     $friends[$friendId]['remainigAmount'] =  ($remainingAmount);
                 }
             }
+            // to add friends groups to friends array
+            foreach ($friendsGroupsWithUsers as $groups) {
+                foreach ($groups['users'] as $users) {
+                    if ($users['id'] == $friend['id']) {
+                        $friends[$friendId]['groups'][$groups['id']] = $groups['title'];
+                    }
+                }
+            }
         }
 
-        // dd($groupsWithUsers);
-        // dd($friends);
-        return view('myFriends')->with(['friends' => $friends, 'friendsGroupsWithUsers' => $groupsWithUsers]);
-    }
+        // code to render blade using ajax
+        // if ($request->ajax()) {
+        //     $returnHTML = view('renderSettelExpenseTable', compact(['friends', 'friendsGroupsWithUsers']))->render();
+        //     return response()->json(['success' => true, 'html' => $returnHTML]);
+        // } else {
+        //     return view('myFriends')->with('friendsGroups', $friendsGroups);
+        // }
 
+        // dd($friends);
+        // converting the array into collection
+        $friendsObject = collect($friends)->map(function ($friend) {
+            return (object) $friend;
+        });
+        // dd($friendsObject);
+        if ($request->ajax()) {
+            // $data = User::select('id', 'name', 'email')->get();
+            return DataTablesDataTables::of($friendsObject)->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    // $btn = '<a href="javascript:void(0)" class="btn btn-primary btn-sm">View</a>';
+                    $btn = "<button name='settle' value='Settle' class='btn  mr-2  text-primary open-settel-modal'
+                        data-friend-id='" . $row->id . "'>
+                        <i class='fa fa-money' style='font-size:24px'></i>
+                    </button>";
+                    return $btn;
+                })
+                ->addColumn('groupNames', function ($row) {
+                    $elemets = "<div class='row'>";
+                    // dd($row->groups);
+                    foreach ($row->groups as $key => $groups) {
+                        $elemets .=
+                            "<div class='mr-3' data-group-id='" . $key . "'>
+                               <h4>
+                                    <span class='badge badge-light'> " . $groups  . "</span>
+                                </h4>
+                            </div>";
+                    }
+                    $elemets .= "</div>";
+                    return  $elemets;
+                })
+                // ->escape(false)
+                ->rawColumns(['action', 'groupNames'])
+                ->make(true);
+        }
+        return view('myFriends')->with('friendsGroups', $friendsGroups);
+    }
 
     /**
      * Show the form for creating a new resource.
