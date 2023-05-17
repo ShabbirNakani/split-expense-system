@@ -15,14 +15,14 @@
                     <p class="login-box-msg">You are only one step a way from your new password, recover your password now.
                     </p>
 
-                    <form method="POST" action="{{ route('password.update') }}">
+                    <form method="POST" action="{{ route('password.update') }}" id="reset-password-form">
                         @csrf
                         <input type="hidden" name="token" value="{{ $token }}">
 
                         {{-- email --}}
-                        <div class="input-group mb-3">
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                                name="email" value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus>
+                        <div class="input-group mt-3">
+                            <input id="email" type="email" class="form-control resetCommon @error('email') is-invalid @enderror"
+                                name="email" value="{{ $email ?? old('email') }}" autocomplete="email" autofocus>
                             {{-- email logo --}}
                             <div class="input-group-append">
                                 <div class="input-group-text">
@@ -30,16 +30,16 @@
                                 </div>
                             </div>
                             {{-- error handling --}}
-                            @error('email')
+                            {{-- @error('email')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                            @enderror
+                            @enderror --}}
                         </div>
                         {{-- password --}}
-                        <div class="input-group mb-3">
+                        <div class="input-group mt-3">
                             <input id="password" type="password"
-                                class="form-control @error('password') is-invalid @enderror" name="password" required
+                                class="form-control  resetCommon @error('password') is-invalid @enderror" name="password"
                                 autocomplete="new-password" placeholder="Password">
                             {{-- password logo --}}
                             <div class="input-group-append">
@@ -55,9 +55,9 @@
                             @enderror
                         </div>
                         {{-- confirm password --}}
-                        <div class="input-group mb-3">
-                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation"
-                                required autocomplete="new-password" placeholder="Confirm Password">
+                        <div class="input-group mt-3 mb-3">
+                            <input id="password-confirm" type="password" class="form-control resetCommon" name="password_confirmation"
+                                autocomplete="new-password" placeholder="Confirm Password">
                             {{-- logo --}}
                             <div class="input-group-append">
                                 <div class="input-group-text">
@@ -83,4 +83,9 @@
         <!-- /.login-box -->
         @include('authMIne.layouts.scripts')
     </body>
+@endsection
+@section('pagewise-script')
+    <!-- Laravel Javascript Validation -->
+    <script type="text/javascript" src="{{ asset('vendor/jsvalidation/js/jsvalidation.js') }}"></script>
+    {!! JsValidator::formRequest('App\Http\Requests\ResetPasswordRequest', '#reset-password-form') !!}
 @endsection

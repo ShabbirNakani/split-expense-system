@@ -7,16 +7,8 @@ use App\Models\GroupList;
 use App\Models\GroupUser;
 use App\Models\SplitExpense;
 use App\Models\User;
-use Facade\Ignition\DumpRecorder\Dump;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Stmt\GroupUse;
-use PHPUnit\Framework\Constraint\JsonMatches;
-use PHPUnit\TextUI\XmlConfiguration\Group;
-use Psy\TabCompletion\Matcher\FunctionsMatcher;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class GroupController extends Controller
 {
@@ -86,28 +78,37 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request);
+        // if ($validation->fails()) {
+        //     return redirect()->back()->withErrors($validation->errors());
+        // }
+        // dd($request);
         //  + 1 for myself
-        $totalMembers = sizeof($request->users) + 1;
-        $newGroup = GroupList::create([
-            'user_id' => Auth::user()->id,
-            'title' => $request->title,
-            'discription' => $request->discription,
-            'total_members' => $totalMembers,
-        ]);
-        // store groupusers
-        foreach ($request->users as $userId) {
+        try {
+            $totalMembers = sizeof($request->users) + 1;
+            $newGroup = GroupList::create([
+                'user_id' => Auth::user()->id,
+                'title' => $request->title,
+                'discription' => $request->discription,
+                'total_members' => $totalMembers,
+            ]);
+            // store groupusers
+            foreach ($request->users as $userId) {
+                GroupUser::create([
+                    'user_id' => $userId,
+                    'group_list_id' => $newGroup->id,
+                ]);
+            }
+            // creatin my record
             GroupUser::create([
-                'user_id' => $userId,
+                'user_id' => Auth::user()->id,
                 'group_list_id' => $newGroup->id,
             ]);
-        }
-        // creatin my record
-        GroupUser::create([
-            'user_id' => Auth::user()->id,
-            'group_list_id' => $newGroup->id,
-        ]);
 
-        return redirect('groups')->with('status', 'Group Created SuccesFully');
+            return redirect('/groups')->with('status', 'Group Created SuccesFully');
+        } catch (\Exception $e) {
+            return redirect('/groups')->with('status', 'Some technical error occured!!!');
+        }
     }
 
     /**
@@ -144,6 +145,7 @@ class GroupController extends Controller
      */
     public function edit($id)
     {
+        // $validator = JsValidator::make($this->validationRules);
         // auth user
         // groupcreator from query
         // DB::enableQueryLog();

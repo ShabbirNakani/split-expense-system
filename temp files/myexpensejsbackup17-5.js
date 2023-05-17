@@ -82,104 +82,105 @@ $(function () {
         $(".checkBoxCommon").prop('checked', $(this).prop('checked'));
     });
 
-    //create expense form jquery validation + append
-    // var validator = $("#createExpenseForm").validate({
-    //     rules: {
-    //         title: {
-    //             required: true,
-    //             // lettersonly: true
-    //         },
-    //         amount: {
-    //             required: true,
-    //             number: true
-    //         },
-    //         expenseDate: "required",
-    //         'expenseUsers[]': {
-    //             required: true,
-    //         },
-    //     },
-    //     messages: {
-    //         title: "Title field is required.",
-    //         amount: {
-    //             required: "Amount field is required.",
-    //             number: "Only numbers are allowed.",
-    //         },
-    //         expenseDate: "Expense Date is required.",
-    //         'expenseUsers[]': {
-    //             required: "Select atleast one member to continue.",
-    //         },
-    //     },
-    //     errorPlacement: function (error, element) {
-    //         // console.log(element.attr('name'));
-    //         if (element.attr("type") == "checkbox") {
-    //             error.insertAfter($(element).parents().siblings('.showCheckBoxError'));
-    //         } else {
-    //             // something else if it's not a checkbox
-    //             error.insertAfter($(element));
-    //         }
-    //     },
+    create expense form jquery validation + append
+    var validator = $("#createExpenseForm").validate({
+        rules: {
+            title: {
+                required: true,
+                // lettersonly: true
+            },
+            amount: {
+                required: true,
+                number: true
+            },
+            expenseDate: "required",
+            'expenseUsers[]': {
+                required: true,
+            },
+        },
+        messages: {
+            title: "Title field is required.",
+            amount: {
+                required: "Amount field is required.",
+                number: "Only numbers are allowed.",
+            },
+            expenseDate: "Expense Date is required.",
+            'expenseUsers[]': {
+                required: "Select atleast one member to continue.",
+            },
+        },
+        errorPlacement: function (error, element) {
+            // console.log(element.attr('name'));
+            if (element.attr("type") == "checkbox") {
+                error.insertAfter($(element).parents().siblings('.showCheckBoxError'));
+            } else {
+                // something else if it's not a checkbox
+                error.insertAfter($(element));
+            }
+        },
 
-    //     // create expense on submit event
-    //     //it handles the form on submit
-    //     submitHandler: function (form) {
+        // create expense on submit event
+        //it handles the form on submit
+        submitHandler: function (form) {
 
-    //         var createExpenseForm = $('#createExpenseForm');
-    //         // event.preventDefault();
-    //         $('#submitCreate').prop('disabled', true);
-    //         // alert('submitted');
-    //         // console.log(createExpenseForm.serialize())
-    //         // create expense ajax
-    //         $.ajax({
-    //             type: "POST",
-    //             // url: "{{ route('expense.store') }}",
-    //             url: "/expense",
-    //             data: createExpenseForm.serialize(),
-    //             success: function (data) {
-    //                 console.log('craete expense form data sent');
-    //                 // console.log('create form date:', data);
+            var createExpenseForm = $('#createExpenseForm');
+            // event.preventDefault();
+            $('#submitCreate').prop('disabled', true);
+            // alert('submitted');
+            // console.log(createExpenseForm.serialize())
+            // create expense ajax
+            $.ajax({
+                type: "POST",
+                // url: "{{ route('expense.store') }}",
+                url: "/expense",
+                data: createExpenseForm.serialize(),
+                success: function (data) {
+                    console.log('craete expense form data sent');
+                    // console.log('create form date:', data);
 
-    //                 //append the data
-    //                 $('#expense-table').append(
-    //                     `<tr class="data_${data.newExpense.id}">
-    //                         <td>${data.newExpense.title}</td>
-    //                         <td>${data.newExpense.members}</td>
-    //                         <td>${data.newExpense.amount}</td>
-    //                         <td>${data.newExpense.expense_date}</td>
-    //                         <td id="actions">
-    //                             <a class="mr-2 btn text-primary editExpenseButton"
-    //                                 title="Edit Expense" data-expenseId="${data.newExpense.id}">
-    //                                 <i class="fa fa-edit"></i>
-    //                             </a>
-    //                             <input type="hidden" name="groupId" value="${data.newExpense.id}" id="groupId">
-    //                             <button name="delete" value="delete" class="btn  mr-2  text-danger deleteExpenseButton"
-    //                                 data-expenseId="${data.newExpense.id}">
-    //                                 <i class="fa fa-trash"></i>
-    //                             </button>
-    //                         </td>
-    //                   </tr> `
-    //                 );
+                    //append the data
+                    $('#expense-table').append(
+                        `<tr class="data_${data.newExpense.id}">
+                            <td>${data.newExpense.title}</td>
+                            <td>${data.newExpense.members}</td>
+                            <td>${data.newExpense.amount}</td>
+                            <td>${data.newExpense.expense_date}</td>
+                            <td id="actions">
+                                <a class="mr-2 btn text-primary editExpenseButton"
+                                    title="Edit Expense" data-expenseId="${data.newExpense.id}">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <input type="hidden" name="groupId" value="${data.newExpense.id}" id="groupId">
+                                <button name="delete" value="delete" class="btn  mr-2  text-danger deleteExpenseButton"
+                                    data-expenseId="${data.newExpense.id}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                      </tr> `
+                    );
 
-    //                 $('#create-expense-modal').modal('toggle');
-    //                 $('#titleCreate').val('');
-    //                 $('#amountCreate').val('');
-    //                 $('#expenseDateCreate').val('');
-    //                 $('.checkBoxCommon').prop('checked', false); // Unchecks it
-    //                 $('#ckbCheckAll').prop('checked', false);
-    //                 $('#submitCreate').prop('disabled', false);
-    //                 toastr.success('A New Expense Has Created');
-    //             },
-    //             error: function (data) {
-    //                 console.log('craete expense form data sent');
-    //                 console.log(data);
-    //                 $('#submitCreate').prop('disabled', false);
-    //                 toastr.error('Expense was not Created please try again');
-    //             },
-    //         });
-    //     }
-    // });
+                    $('#create-expense-modal').modal('toggle');
+                    $('#titleCreate').val('');
+                    $('#amountCreate').val('');
+                    $('#expenseDateCreate').val('');
+                    $('.checkBoxCommon').prop('checked', false); // Unchecks it
+                    $('#ckbCheckAll').prop('checked', false);
+                    $('#submitCreate').prop('disabled', false);
+                    toastr.success('A New Expense Has Created');
+                },
+                error: function (data) {
+                    console.log('craete expense form data sent');
+                    console.log(data);
+                    $('#submitCreate').prop('disabled', false);
+                    toastr.error('Expense was not Created please try again');
+                },
+            });
+        }
+    });
 
     //create expense modal closing
     $(document).on('hidden.bs.modal', '#create-expense-modal', function () {
+        // alert('closing create modal');
         $('#titleCreate').val('');
         $('#amountCreate').val('');
         $('#expenseDateCreate').val('');
@@ -187,10 +188,7 @@ $(function () {
         $('#ckbCheckAll').prop('checked', false);
         $('#submitCreate').prop('disabled', false);
         // validator.resetForm();
-        // $('#expenseDateCreate').removeClass("error");
-        $(".is-invalid").removeClass("is-invalid");
-        $('.invalid-feedback').remove();
-        $(".is-valid").removeClass("is-valid");
+        $('#expenseDateCreate').removeClass("error");
     });
 
     //  delete button on click operation for logo
@@ -310,117 +308,114 @@ $(function () {
     }
 
     // validate  edit form and send it to controller in submit handler
-    // var editValidator = $("#edit-expense-form").validate({
-    //     rules: {
-    //         title: {
-    //             required: true,
-    //             // lettersonly: true
-    //         },
-    //         amount: {
-    //             required: true,
-    //             number: true
-    //         },
-    //         expenseDate: "required",
-    //         'expenseUsers[]': {
-    //             required: true,
-    //         },
-    //     },
-    //     messages: {
-    //         title: "Title field is required.",
-    //         amount: {
-    //             required: "Amount field is required.",
-    //             number: "Only numbers are allowed.",
-    //         },
-    //         expenseDate: "Expense Date is required.",
-    //         'expenseUsers[]': {
-    //             required: "Select atleast one member to continue.",
-    //         },
-    //     },
-    //     errorPlacement: function (error, element) {
-    //         // console.log(element.attr('name'));
-    //         if (element.attr("type") == "checkbox") {
-    //             error.insertAfter($(element).parents().siblings('.showCheckBoxError'));
-    //         } else {
-    //             // something else if it's not a checkbox
-    //             error.insertAfter($(element));
-    //         }
-    //     },
+    var editValidator = $("#edit-expense-form").validate({
+        rules: {
+            title: {
+                required: true,
+                // lettersonly: true
+            },
+            amount: {
+                required: true,
+                number: true
+            },
+            expenseDate: "required",
+            'expenseUsers[]': {
+                required: true,
+            },
+        },
+        messages: {
+            title: "Title field is required.",
+            amount: {
+                required: "Amount field is required.",
+                number: "Only numbers are allowed.",
+            },
+            expenseDate: "Expense Date is required.",
+            'expenseUsers[]': {
+                required: "Select atleast one member to continue.",
+            },
+        },
+        errorPlacement: function (error, element) {
+            // console.log(element.attr('name'));
+            if (element.attr("type") == "checkbox") {
+                error.insertAfter($(element).parents().siblings('.showCheckBoxError'));
+            } else {
+                // something else if it's not a checkbox
+                error.insertAfter($(element));
+            }
+        },
 
-    //     // edit expense on submit event
-    //     //it handles the form on submit
-    //     submitHandler: function (form) {
+        // edit expense on submit event
+        //it handles the form on submit
+        submitHandler: function (form) {
 
-    //         var editExpenseForm = $('#edit-expense-form');
-    //         // event.preventDefault();
-    //         // $('#editSubmit').prop('disabled', true);
-    //         // alert('submitted');
-    //         // console.log(editExpenseForm.serialize())
-    //         // edit expense ajax
-    //         $.ajax({
-    //             type: "POST",
-    //             // url: "{{ route('expense.update', 1) }}",
-    //             url: "/expense/1  ",
-    //             type: 'PUT',
-    //             data: editExpenseForm.serialize(),
-    //             success: function (data) {
-    //                 // console.log('edit expense form data sent');
-    //                 // console.log('edit form data:', data);
+            var editExpenseForm = $('#edit-expense-form');
+            // event.preventDefault();
+            // $('#editSubmit').prop('disabled', true);
+            // alert('submitted');
+            // console.log(editExpenseForm.serialize())
+            // edit expense ajax
+            $.ajax({
+                type: "POST",
+                // url: "{{ route('expense.update', 1) }}",
+                url: "/expense/1  ",
+                type: 'PUT',
+                data: editExpenseForm.serialize(),
+                success: function (data) {
+                    // console.log('edit expense form data sent');
+                    // console.log('edit form data:', data);
 
-    //                 // append the data
-    //                 let members = data.updateExpense.expenseUsers.length + 1;
-    //                 $(`.data_${data.updateExpense.expenseId}`).replaceWith(
-    //                     `<tr class="data_${data.updateExpense.expenseId}">
-    //                         <td>${data.updateExpense.title}</td>
-    //                         <td>${members}</td>
-    //                         <td>${data.updateExpense.amount}</td>
-    //                         <td>${data.updateExpense.expenseDate}</td>
-    //                         <td id="actions">
-    //                             <a class="mr-2 btn text-primary editExpenseButton"
-    //                                 title="Edit Expense" data-expenseId="${data.updateExpense.expenseId}">
-    //                                 <i class="fa fa-edit"></i>
-    //                             </a>
-    //                             <input type="hidden" name="groupId" value="${data.updateExpense.expenseId}" id="groupId">
-    //                             <button name="delete" value="delete" class="btn  mr-2  text-danger deleteExpenseButton"
-    //                                 data-expenseId="${data.updateExpense.expenseId}">
-    //                                 <i class="fa fa-trash"></i>
-    //                             </button>
-    //                         </td>
-    //                     </tr> `
-    //                 );
+                    // append the data
+                    let members = data.updateExpense.expenseUsers.length + 1;
+                    $(`.data_${data.updateExpense.expenseId}`).replaceWith(
+                        `<tr class="data_${data.updateExpense.expenseId}">
+                            <td>${data.updateExpense.title}</td>
+                            <td>${members}</td>
+                            <td>${data.updateExpense.amount}</td>
+                            <td>${data.updateExpense.expenseDate}</td>
+                            <td id="actions">
+                                <a class="mr-2 btn text-primary editExpenseButton"
+                                    title="Edit Expense" data-expenseId="${data.updateExpense.expenseId}">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <input type="hidden" name="groupId" value="${data.updateExpense.expenseId}" id="groupId">
+                                <button name="delete" value="delete" class="btn  mr-2  text-danger deleteExpenseButton"
+                                    data-expenseId="${data.updateExpense.expenseId}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr> `
+                    );
 
-    //                 $('#edit-expense-modal').modal('toggle');
-    //                 $('#editTitle').val('');
-    //                 $('#editAmount').val('');
-    //                 $('#editExpenseDate').val('');
-    //                 $('.checkBoxCommon').prop('checked', false); // Unchecks it
-    //                 $('#ckbCheckAll').prop('checked',
-    //                     false); //uncheck select all check box
-    //                 $('#EditSubmit').prop('disabled', false);
-    //                 toastr.info('Expense Edited SuccesFully');
-    //             },
-    //             error: function (data) {
-    //                 console.log('edit expense form data not sent');
-    //                 console.log(data);
-    //                 $('#submitCreate').prop('disabled', false);
-    //             },
-    //         });
-    //     }
-    // });
+                    $('#edit-expense-modal').modal('toggle');
+                    $('#editTitle').val('');
+                    $('#editAmount').val('');
+                    $('#editExpenseDate').val('');
+                    $('.checkBoxCommon').prop('checked', false); // Unchecks it
+                    $('#ckbCheckAll').prop('checked',
+                        false); //uncheck select all check box
+                    $('#EditSubmit').prop('disabled', false);
+                    toastr.info('Expense Edited SuccesFully');
+                },
+                error: function (data) {
+                    console.log('edit expense form data not sent');
+                    console.log(data);
+                    $('#submitCreate').prop('disabled', false);
+                },
+            });
+        }
+    });
 
     // edit expense closing
     $(document).on('hidden.bs.modal', '#edit-expense-modal', function () {
+        // alert('closing edit modal');
         $('#editTitle').val('');
         $('#editAmount').val('');
         $('#editExpenseDate').val('');
         $('.checkBoxCommon').prop('checked', false); // Unchecks it
         $('#ckbCheckAll').prop('checked', false);
         $('#EditSubmit').prop('disabled', false);
-        // editValidator.resetForm();
-        // $('#editExpenseDate').removeClass("error");
-        $(".is-invalid").removeClass("is-invalid");
-        $('.invalid-feedback').remove();
-        $(".is-valid").removeClass("is-valid");
-
+        editValidator.resetForm();
+        $('#editExpenseDate').removeClass("error");
     });
 
     // search expenses

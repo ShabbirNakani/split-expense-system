@@ -21,11 +21,11 @@
 
                     <p class="login-box-msg">You forgot your password? Here you can easily retrieve a new password.</p>
 
-                    <form method="POST" action="{{ route('password.email') }}">
+                    <form method="POST" action="{{ route('password.email') }}" id='forgot-password-form'>
                         @csrf
                         {{-- email input --}}
-                        <div class="input-group mb-3">
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                        <div class="input-group mb-1">
+                            <input id="email" type="email" class="form-control forgetCommon @error('email') is-invalid @enderror"
                                 name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
                                 placeholder="Email">
 
@@ -42,8 +42,7 @@
                                 </span>
                             @enderror
                         </div>
-
-                        <div class="row">
+                        <div class="row mt-4">
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary btn-block">Request new password</button>
                             </div>
@@ -64,4 +63,10 @@
         <!-- /.login-box -->
         @include('authMIne.layouts.scripts')
     </body>
+@endsection
+@section('pagewise-script')
+
+    <!-- Laravel Javascript Validation -->
+    <script type="text/javascript" src="{{ asset('vendor/jsvalidation/js/jsvalidation.js') }}"></script>
+    {!! JsValidator::formRequest('App\Http\Requests\ForgetPasswordRequest', '#forgot-password-form') !!}
 @endsection

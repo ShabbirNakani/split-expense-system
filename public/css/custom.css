@@ -76,3 +76,34 @@
     background: linear-gradient(to right, #373b44, #4286f4) !important;
     color: #fff;
 }
+
+
+.popHoverFriendsGroups {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.popHoverFriendsGroups .friendsGroupsName {
+    visibility: hidden;
+    width: 500px;
+    height: 100px;
+    color: black;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    border: 3px solid black;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+    background-color: white;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.popHoverFriendsGroups:hover .friendsGroupsName {
+    visibility: visible;
+    opacity: 1;
+}

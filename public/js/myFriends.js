@@ -1,7 +1,7 @@
 $(function () {
 
 
-    // make an ajax call to add table first time
+    // make an ajax call to add table first time not used anymore
 
     // $.ajax({
     //     type: "GET",
@@ -230,6 +230,4 @@ $(function () {
         // Directly return the joined string
         return splitStr.join(' ');
     }
-
-
 })

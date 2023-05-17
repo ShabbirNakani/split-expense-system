@@ -147,18 +147,6 @@ class FriendsController extends Controller
                 ->rawColumns(['action', 'groupNames'])
                 ->make(true);
         }
-
-        // TODO => pophover
-        // $elemets .=
-        // "<div class='mr-3' data-group-id='" . $key . "'>
-        //                        <h4>
-        //                        <div class='popHoverFriendsGroups'>
-        //                             <span class='friendsGroupsName'> . $groups  .</span>
-        //                        </div>
-        //                         </h4>
-        //                     </div>";
-
-
         return view('myFriends')->with('friendsGroups', $friendsGroups);
     }
 

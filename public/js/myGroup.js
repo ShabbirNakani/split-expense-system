@@ -1,4 +1,5 @@
 $(function () {
+
     //featching edit group details and appending
     $('.edit-group-link').on('click', function (event) {
         event.preventDefault();
@@ -17,7 +18,7 @@ $(function () {
         // console.log(groupId);
         // var url = "{{ route('groups.edit', ':temp') }}";
         // url = url.replace(':temp', groupId);
-        url= `/groups/${groupId}/edit`;
+        url = `/groups/${groupId}/edit`;
         $.ajax({
             url: url,
             data: groupId,
@@ -38,18 +39,13 @@ $(function () {
                     // console.log(user.group_users[0],'users');
                     let userDetails = user.group_users[0];
                     // console.log(userDetails);
-                    if (userDetails.id != `{{ Auth::user()->id }}`) {
-
+                    if (userDetails.id != authUserId) {
                         //delete those elemets from the list first then append as selected
-                        $(`#selectEdit option[value='${userDetails.id}']`)
-                            .remove();
-
+                        $(`#selectEdit option[value='${userDetails.id}']`).remove();
                         // create the option and append to Select2
                         //note we can not directly select any option using azax so we need to create a new option and append it
-                        var option = new Option(userDetails.name,
-                            userDetails.id, true, true);
-                        $('#selectEdit').append(option).trigger(
-                            'change');
+                        var option = new Option(userDetails.name, userDetails.id, true, true);
+                        $('#selectEdit').append(option).trigger('change');
 
                         // manually trigger the `select2:select` event
                         $('#selectEdit').trigger({
@@ -68,7 +64,7 @@ $(function () {
         });
     });
 
-    // deselecting upper selected group users on close method of modal
+    // edit closing
     $(".edit-group-modal").on("hidden.bs.modal", function () {
 
         // alert('modal closed');
@@ -77,97 +73,48 @@ $(function () {
         });
         $('#titleEdit').val('');
         $('#discriptionEdit').val('');
-        editValidator.resetForm();
-    });
-
-
-    //create form jquery validation
-    careateValidator = $("#createGroupForm").validate({
-        rules: {
-            title: "required",
-            discription: "required",
-            "users[]": "required"
-
-        },
-        messages: {
-            title: "Title field is required.",
-            discription: "Discription field is required.",
-            "users[]": "Atleast one user is required."
-        },
-        // errorPlacement: function(error, element) {
-        //     if (element.is(":radio")) {
-        //         error.appendTo(element.parents('.form-group'));
-        //     } else { // This is the default behavior
-        //         error.insertAfter(element);
-        //     }
-        // },
-        submitHandler: function (form) {
-            form.submit();
-        }
-    });
-
-    //edit form jquery validation
-    editValidator = $("#editGroupForm").validate({
-        rules: {
-            title: "required",
-            discription: "required",
-            "users[]": {
-                required: true,
-                checExpensesBeforeEdit: true,
-            }
-
-        },
-        messages: {
-            title: "Title field is required.",
-            discription: "Discription field is required.",
-            "users[]": {
-                required: "Atleast one user is required."
-            }
-        },
-        submitHandler: function (form) {
-            form.submit();
-        }
+        $(".is-invalid").removeClass("is-invalid");
+        $('.invalid-feedback').remove();
+        $(".is-valid").removeClass("is-valid");
     });
 
     // create expense closing
     $("#createGroupModal").on("hidden.bs.modal", function () {
         $('#titleCreate').val('');
         $('#discriptionCreate').val('');
-
-        careateValidator.resetForm();
-        // $("#allGroupUsersCreate").select2("val", "");
-        // $("#allGroupUsersCreate").empty().trigger('change')
-
+        $(".is-invalid").removeClass("is-invalid");
+        $('.invalid-feedback').remove();
+        $(".is-valid").removeClass("is-valid");
     });
 
     // adding custome method for validation
-    var response;
-    $.validator.addMethod("checExpensesBeforeEdit", function (value, element) {
-        // response = checkExpense();
-        let groupId = $('#hiddenGroupIdEditModal').val();
-        let groupUsers = $('#selectEdit').val();
-        console.log(groupUsers);
-        $.ajax({
-            type: "get",
-            // url: "{{ route('checkExpensesBeforeEdit') }}",
-            url: "/check-expenses-before-edit",
-            async: false,
-            data: {
-                'groupId': groupId,
-                'groupUsers': groupUsers,
-            },
-            success: function (msg) {
-                //If username exists, set response to true
-                console.log(msg, 'succes');
-                // console.log(msg.isvalid);
-                response = (msg.isvalid == true) ? true : false;
-            },
-            error: function (msg) {
-                console.log(msg);
-            },
-        });
-        return response;
-    },
-        "Expenses have not been setteled"
-    );
+    // var response;
+    // $.validator.addMethod("checExpensesBeforeEdit", function (value, element) {
+    //     // response = checkExpense();
+    //     let groupId = $('#hiddenGroupIdEditModal').val();
+    //     let groupUsers = $('#selectEdit').val();
+    //     console.log(groupUsers);
+    //     $.ajax({
+    //         type: "get",
+    //         // url: "{{ route('checkExpensesBeforeEdit') }}",
+    //         url: "/check-expenses-before-edit",
+    //         async: false,
+    //         data: {
+    //             'groupId': groupId,
+    //             'groupUsers': groupUsers,
+    //         },
+    //         success: function (msg) {
+    //             //If username exists, set response to true
+    //             console.log(msg, 'succes');
+    //             // console.log(msg.isvalid);
+    //             response = (msg.isvalid == true) ? true : false;
+    //         },
+    //         error: function (msg) {
+    //             console.log(msg);
+    //         },
+    //     });
+    //     return response;
+    // },
+    //     "Expenses have not been setteled"
+    // );
 })

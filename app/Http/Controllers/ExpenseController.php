@@ -21,17 +21,12 @@ class ExpenseController extends Controller
      */
     public function index(Request $request)
     {
-        // dd($request->all());
-        //finding the group ids
         $groupId = $request->groupId;
 
         // building a query object
-        // $query = Expense::whereIn('id', $expensesIdArray)->orderBy('created_at', 'asc');
-
         $query = Expense::whereGroupListId($groupId)->orderBy('created_at', 'asc');
 
         // search expseses (live search)
-        // live search logic
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->Where(function ($subquery) use ($search) {
@@ -81,6 +76,7 @@ class ExpenseController extends Controller
         //counting members => +1 for meeeee
         $members = count($request->expenseUsers) + 1;
         $creatorId = Auth::user()->id;
+
         // create new expens
         $newExpense = Expense::create([
             'title' => $request->title,
@@ -93,7 +89,6 @@ class ExpenseController extends Controller
 
         //add new split expense
         $splitExpense = number_format((float)$request->amount / $members, 2, '.', '');
-        // dd($splitExpense);
 
         //creating splitexpense users
         foreach ($request->expenseUsers as $user_id) {
@@ -119,7 +114,6 @@ class ExpenseController extends Controller
             'is_Settled' => 'Settled',
         ]);
 
-        // dd($newExpense->id);
         return response()->json(['newExpense' => $newExpense]);
     }
 
@@ -142,16 +136,14 @@ class ExpenseController extends Controller
      */
     public function edit($id)
     {
-        // dd($id);
         $creatorId = Auth::user()->id;
         $expense = Expense::find($id)->toArray();
-
         $expenseUsers = User::select('users.*')
             ->join('split_expenses', 'split_expenses.user_id', '=', 'users.id')
             ->where('split_expenses.expense_id', '=', "$id")
             ->where('users.id', '!=', $creatorId)
+            ->whereNull('split_expenses.deleted_at')
             ->get();
-
         return response()->json(['expense' => $expense, 'expenseUsers' => $expenseUsers]);
     }
 
@@ -165,17 +157,25 @@ class ExpenseController extends Controller
     public function update(Request $request)
     {
         $data = $request->input();
-        $userIds = $data['editExpenseUsers'];
-        $members = count($data['editExpenseUsers']) + 1;
-        $splitExpense = (float) number_format(($data['editAmount'] / $members), 2, '.', '');
+        $userIds = $data['expenseUsers'];
+        $members = count($data['expenseUsers']) + 1;
+        $splitExpense = (float) number_format(($data['amount'] / $members), 2, '.', '');
         $currentUsersIds = SplitExpense::where('group_list_id', $data['groupId'])
             ->where('user_id', '!=', Auth::user()->id)
             ->where('expense_id', $data['expenseId'])
             ->pluck('user_id')
             ->toArray();
+
         // finding the diffrence
         $removedUsers = array_diff($currentUsersIds, $userIds);
+        // dd($removedUsers);
+        //to delete users
+        // DB::enableQueryLog();
+        $deleted = SplitExpense::whereExpenseId($data['expenseId'])->WhereIn('receiver_id', $removedUsers)->whereUserId(Auth::user()->id)->delete();
+        // dd($deleted);
 
+        // dd(DB::getQueryLog());
+        // exit();
         // if user exist or not
         foreach ($userIds as $userId) {
             $record = SplitExpense::where('user_id', $userId)
@@ -185,7 +185,7 @@ class ExpenseController extends Controller
 
             // var_dump($record);
             if ($record  === null) {
-                $newUser = SplitExpense::create([
+                SplitExpense::create([
                     'user_id' => $userId,
                     'receiver_id' => Auth::user()->id,
                     'expense_id' => $data['expenseId'],
@@ -199,18 +199,19 @@ class ExpenseController extends Controller
                 $record->save();
             }
         }
+
         // updating record for me
         $myRecord = SplitExpense::where('user_id', Auth::user()->id)
             ->where('group_list_id', $data['groupId'])
             ->where('expense_id', $data['expenseId'])
             ->first();
         $myRecord->amount = $splitExpense;
-        $record->save();
+        $myRecord->save();
         // update Expense
         $updateExpense = Expense::where('id', $data['expenseId'])->first();
-        $updateExpense->title = $data['editTitle'];
-        $updateExpense->amount = $data['editAmount'];
-        $updateExpense->expense_date = $data['editExpenseDate'];
+        $updateExpense->title = $data['title'];
+        $updateExpense->amount = $data['amount'];
+        $updateExpense->expense_date = $data['expenseDate'];
         $updateExpense->members = $members;
         $updateExpense->save();
 

@@ -24,5 +24,6 @@
 @yield('body')
 
 
+@yield('pagewise-script')
 
 </html>

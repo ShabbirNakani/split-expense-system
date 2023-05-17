@@ -15,12 +15,12 @@
                 <div class="card-body login-card-body">
                     <p class="login-box-msg">Sign in</p>
 
-                    <form method="POST" action="{{ route('login') }}">
+                    <form method="POST" action="{{ route('login') }}" id='loginForm'>
                         @csrf
                         {{-- email --}}
                         <div class="input-group mb-3">
-                            <input type="email" id="email" class="form-control @error('email') is-invalid @enderror"
-                                name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
+                            <input type="email" id="email" class="form-control loginCommon @error('email') is-invalid @enderror"
+                                name="email" value="{{ old('email') }}" autocomplete="email" autofocus
                                 placeholder="Email">
                             {{-- logo for email --}}
                             <div class="input-group-append">
@@ -37,9 +37,8 @@
                         </div>
                         {{-- password --}}
                         <div class="input-group mb-3">
-                            <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                name="password" required autocomplete="current-password" placeholder="Password"
-                                id="password">
+                            <input type="password" class="form-control loginCommon @error('password') is-invalid @enderror"
+                                name="password" autocomplete="current-password" placeholder="Password" id="password">
 
                             {{-- logo for password --}}
                             <div class="input-group-append">
@@ -96,4 +95,9 @@
         <!-- /.login-box -->
     </body>
     @include('authMIne.layouts.scripts')
+@endsection
+@section('pagewise-script')
+    <!-- Laravel Javascript Validation -->
+    <script type="text/javascript" src="{{ asset('vendor/jsvalidation/js/jsvalidation.js') }}"></script>
+    {!! JsValidator::formRequest('App\Http\Requests\LoginRequest', '#loginForm') !!}
 @endsection

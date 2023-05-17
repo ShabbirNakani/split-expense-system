@@ -17,8 +17,8 @@
                     <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" id='register-form'>
                         @csrf
                         {{-- name  --}}
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name"
+                        <div class="input-group mt-3">
+                            <input type="text" class="form-control registerCommon @error('name') is-invalid @enderror" name="name"
                                 value="{{ old('name') }}" autocomplete="name" autofocus placeholder="Full name">
 
                             <div class="input-group-append">
@@ -35,8 +35,8 @@
                             @enderror
                         </div>
                         {{-- number  --}}
-                        <div class="input-group mb-3">
-                            <input type="tel" class="form-control @error('number') is-invalid @enderror" name="number"
+                        <div class="input-group mt-3">
+                            <input type="tel" class="form-control registerCommon @error('number') is-invalid @enderror" name="number"
                                 value="{{ old('number') }}" autocomplete="number" autofocus placeholder="Contact Number">
 
                             <div class="input-group-append">
@@ -53,8 +53,8 @@
                             @enderror
                         </div>
                         {{-- email --}}
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email"
+                        <div class="input-group mt-3">
+                            <input type="email" class="form-control registerCommon @error('email') is-invalid @enderror" name="email"
                                 value="{{ old('email') }}" autocomplete="email" placeholder="Email">
 
                             {{-- email logo --}}
@@ -71,8 +71,8 @@
                             @enderror
                         </div>
                         {{-- new password --}}
-                        <div class="input-group mb-3">
-                            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                        <div class="input-group mt-3">
+                            <input type="password" class="form-control registerCommon @error('password') is-invalid @enderror"
                                 name="password" autocomplete="new-password" placeholder="Password">
                             {{-- logo --}}
                             <div class="input-group-append">
@@ -88,8 +88,8 @@
                             @enderror
                         </div>
                         {{-- confirm new password --}}
-                        <div class="input-group mb-3">
-                            <input type="password" class="form-control" name="password_confirmation"
+                        <div class="input-group mt-3" >
+                            <input type="password" class="form-control registerCommon" name="password_confirmation"
                                 autocomplete="new-password" placeholder="Retype password">
                             {{-- logo --}}
                             <div class="input-group-append">
@@ -99,8 +99,8 @@
                             </div>
                         </div>
                         {{-- profile picture --}}
-                        <div class="input-group mb-3">
-                            <input type="file" class="form-control @error('Profilepic') is-invalid @enderror"
+                        <div class="input-group mt-3 mb-3">
+                            <input type="file" class="form-control registerCommon @error('Profilepic') is-invalid @enderror"
                                 name="Profilepic" id="profile-pic-register" autocomplete="Profilepic" style="height: 45px;">
 
                             {{-- Profilepic logo --}}
@@ -125,7 +125,7 @@
                                     class="profile-user-img img-fluid img-circle" alt="Profile Pic">
                             @endif
                         </div>
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="col-8">
                                 <div class="icheck-primary">
                                     <input type="checkbox" id="agreeTerms" name="terms" value="agree">
@@ -164,6 +164,9 @@
         </div>
         <!-- /.register-box -->
     </body>
+    <!-- Laravel Javascript Validation -->
+    <script type="text/javascript" src="{{ asset('vendor/jsvalidation/js/jsvalidation.js') }}"></script>
+    {!! JsValidator::formRequest('App\Http\Requests\RegisterRequest', '#register-form') !!}
     <script>
         $(function() {
             // initially disable the register button

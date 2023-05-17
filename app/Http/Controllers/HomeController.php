@@ -49,7 +49,6 @@ class HomeController extends Controller
     public function index()
     {
         $authUserId = Auth::user()->id;
-        // dd($authUserId);
         $splitExpenses = SplitExpense::whereUserId($authUserId)
             ->orwhere('receiver_id', $authUserId)->get();
         $total_owe = 0;
@@ -61,6 +60,8 @@ class HomeController extends Controller
                 $total_pay += $splitExpense->amount;
             }
         }
+        $totalSpendings = $total_owe + $total_pay;
+
         $totalOweRemaining = 0;
         $totalPayRemainig = 0;
         $splitExpensesForGrandTotal = SplitExpense::where('is_Settled', 'notSettled')
@@ -68,13 +69,11 @@ class HomeController extends Controller
                 $query->whereUserId($authUserId)
                     ->orwhere('receiver_id', $authUserId);
             })->get();
-
-        // isset amount grand total like friends grand total
         foreach ($splitExpensesForGrandTotal as $splitExpenses) {
             if ($splitExpense->receiver_id == $authUserId) {
-                $totalOweRemaining += $splitExpense->amount;
+                $totalOweRemaining += $splitExpenses->amount;
             } elseif ($splitExpense->user_id == $authUserId) {
-                $totalPayRemainig += $splitExpense->amount;
+                $totalPayRemainig += $splitExpenses->amount;
             }
         }
         if ($totalOweRemaining > $totalPayRemainig) {
@@ -84,14 +83,11 @@ class HomeController extends Controller
         } elseif ($totalOweRemaining == $totalPayRemainig) {
             $remainingAmount = 0;
         }
+
         // total groups
         $groupsCount = GroupUser::having('user_id', $authUserId)->count('user_id');
-        // dd($groups);
-
-
-        return view('home')->with(['total_owe' => $total_owe, 'total_pay' => $total_pay, 'remainingAmount' => $remainingAmount, 'groupsCount' => $groupsCount]);
+        return view('home')->with(['totalSpendings' => $totalSpendings, 'groupsCount' => $groupsCount, 'remainingAmount' => $remainingAmount]);
     }
-
 
     public function updateProfile(Request $data)
     {
